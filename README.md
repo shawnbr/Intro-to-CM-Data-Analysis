@@ -1,1 +1,7 @@
 # Intro-to-CM-Data-Analysis
+
+We are proposing using SNAP's Gowalla or Brightkite data set which consist of two files: an undirected graph of a social network and geo-tagged check-ins. These data sets come from: "a location-based social networking service provider where users shared their locations by checking-in." Both have well over 10,000 data points.  We want to use one of these data sets to determine whether the service is used more (by considering the number of times users checked in over time) based on the amount of connections in a user's social network. Separately, we also want to see how the check-in dynamic is influenced in terms of checking in all alone vs. with friends (do users tend to check in moments after their friends checked in?). By doing so it would also be possible to identify the "leaders" of the social network who influence on the rest to contribute more.  
+It is worth noting that for our analysis we intend to establish a 'sign-up' date based on the first registered check-in for each user.
+In terms of the connective media theories this assignment would be based on, we believe that the following apply:
+- Burke's work on social learning. Do newcomers who see their friends contributing go on to share more content themselves?  
+- Preece's The Reader-to-Leader Framework: both in term of detecting readers, contributors and leaders in the network and also the shift of a reader to a contributor over time.
