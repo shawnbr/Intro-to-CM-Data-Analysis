@@ -50,20 +50,20 @@ X = []
 Y = []
 temp = {}
 for key in popCheckIn.keys():
-    if popCheckIn[key][0]/float(maxVal) < 0.05:
-        X.append(popCheckIn[key][0]/float(maxVal))
-        Y.append(popCheckIn[key][1])
-        try:
-            temp[popCheckIn[key][0]].append(popCheckIn[key][1])
-        except:
-            temp[popCheckIn[key][0]] = [popCheckIn[key][1]]
+    #if popCheckIn[key][0]/float(maxVal) < 0.05:
+    X.append(popCheckIn[key][0]/float(maxVal))
+    Y.append(popCheckIn[key][1])
+    try:
+        temp[popCheckIn[key][0]].append(popCheckIn[key][1])
+    except:
+        temp[popCheckIn[key][0]] = [popCheckIn[key][1]]
 
 #Average 
 Xavg = []
 Yavg = []
 for key in temp.keys():
-    X.append(key)
-    Y.append(sum(temp[key])/float(len(temp[key])))
+    Xavg.append(key/float(maxVal))
+    Yavg.append(sum(temp[key])/float(len(temp[key])))
 plot(X,Y,"Checkins vs Popularity", "Popularity", "Checkins")
 
     
