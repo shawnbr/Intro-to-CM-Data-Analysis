@@ -4,16 +4,22 @@ DIR_PATH = os.getcwd() #Get currect directory
 N = 1000
 #f = open(DIR_PATH + os.sep + "data\Gowalla_edges.txt")
 
+LAT = 2
+LON = 3
+LID = 4
+
 popCheckIn = {}
-checkins = {}
+locations = {}
 
 def plot(X,Y, title, xlabel, ylabel):
     #plt.figure()
-    plt.plot(X, Y, 'ro')
+    plt.plot(X, Y, '.')
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
+    
     plt.show()
+    
     #plt.savefig('CMC '+name+'.png')
 
 with open(DIR_PATH + os.sep + "data\Gowalla_edges.txt", 'r') as f:
@@ -33,12 +39,11 @@ with open(DIR_PATH + os.sep + "data\Gowalla_totalCheckins.txt", 'r') as f:
     #i = 0
     for line in f:
         #if i > N:
-        #    break
+            #break
         try:
             popCheckIn[int(line.strip().split()[0])][1] += 1
         except:
             popCheckIn[int(line.strip().split()[0])].append(1)
-        
         #i += 1
 
 maxVal = -1
