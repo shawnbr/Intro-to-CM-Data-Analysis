@@ -70,6 +70,7 @@ with open(DIR_PATH + os.sep + "data\Gowalla_totalCheckins.txt", 'r') as f:
 print "crunch time"
 #for each user
 for user in checkins.keys():
+    print user
     #for each checkin
     for times in checkins[user].keys():
         friendCount = 0
@@ -86,11 +87,11 @@ for user in checkins.keys():
             except:
                 pass
         try:
-            checkinwfriends[uid][friendCount] += 1
+            checkinwfriends[user][friendCount] += 1
         except:
             counts = {}
             counts[friendCount] = 1
-            checkinwfriends[uid] = counts
+            checkinwfriends[user] = counts
 
 
 print "time to graph"
@@ -101,7 +102,7 @@ Y = []
                                         
 #plotting
 for uid in checkinwfriends.keys():
-    totalCheckins = list.size(checkins[uid].keys())
+    totalCheckins = len(checkins[uid].keys())
     
     for friendCount in checkinwfriends.keys():
         X.append(friendCount)
