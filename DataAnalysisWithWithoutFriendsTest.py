@@ -5,16 +5,16 @@ import os
 import matplotlib.pyplot as plt
 DIR_PATH = os.getcwd() #Get currect directory
 N = 1000
-#f = open(DIR_PATH + os.sep + "data\Gowalla_edges.txt")
-
+version = ""
 UID = 0
 TIM = 1
 LAT = 2
 LON = 3
 LID = 4
 
-delta = timedelta(minutes=10)
- 
+#delta = timedelta(minutes=10)
+delta = 600 
+
 #dictionary of connections: key=userid, val=friend id
 connections = {}
 #dictionary of checkins: key=userid, val=dictionary of times: key=time, val= locations[lat,lon]
@@ -27,7 +27,7 @@ checkinwfriends = {}
 
 def plot(X,Y, title, xlabel, ylabel):
     #plt.figure()
-    plt.plot(X, Y, '.')
+    plt.plot(X, Y, 'ro')
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
@@ -35,7 +35,7 @@ def plot(X,Y, title, xlabel, ylabel):
     #plt.savefig('CMC '+name+'.png')
 
 print "importing edges"
-with open(DIR_PATH + os.sep + "data\Gowalla_edges.txt", 'r') as f:
+with open(DIR_PATH + os.sep + "data\Gowalla_edges"+version+".txt", 'r') as f:
     for line in f:
         uid = int(line.strip().split()[0])
         friendid = int(line.strip().split()[1])
@@ -51,7 +51,7 @@ with open(DIR_PATH + os.sep + "data\Gowalla_edges.txt", 'r') as f:
 
 
 print "importing checkins"
-with open(DIR_PATH + os.sep + "data\Gowalla_totalCheckins.txt", 'r') as f:
+with open(DIR_PATH + os.sep + "data\Gowalla_totalCheckins"+version+".txt", 'r') as f:
     for line in f:
         line = line.strip().split()
         
@@ -70,7 +70,8 @@ with open(DIR_PATH + os.sep + "data\Gowalla_totalCheckins.txt", 'r') as f:
 print "crunch time"
 #for each user
 for user in checkins.keys():
-    print user
+    checkinwfriends[user] = {}
+    print "user "+ str(user)
     #for each checkin
     for times in checkins[user].keys():
         friendCount = 0
@@ -80,36 +81,50 @@ for user in checkins.keys():
             #for each friend's checkins
             try:
                 for ftimes in checkins[friend]:
-                    #if they checked in at a similar time           
-                    if times-ftimes < delta or ftimes-times < delta:
+                    #if they checked in at a similar time
+                    if abs((times-ftimes).total_seconds()) < delta:
                         friendCount += 1
             #if the friend never checked in
             except:
                 pass
         try:
+            print user, friendCount
             checkinwfriends[user][friendCount] += 1
         except:
-            counts = {}
-            counts[friendCount] = 1
-            checkinwfriends[user] = counts
+            checkinwfriends[user][friendCount] = 1            
 
-
+ 
 print "time to graph"
 #Number of friends checked in with
 X = []
 #Frequencies of occurence
 Y = []
-                                        
+temp = {}                              
 #plotting
 for uid in checkinwfriends.keys():
     totalCheckins = len(checkins[uid].keys())
     
-    for friendCount in checkinwfriends.keys():
-        X.append(friendCount)
-        Y.append(checkinwfriends[friendCount]/totalCheckins)
-plot(X,Y,"Frequency vs Friend Count", "# of Friends Checked in with", "Frequency")
-                
-                
+    for friendCount in checkinwfriends[uid].keys():
+        try:
+            Y.append(checkinwfriends[uid][friendCount]/float(totalCheckins))
+            X.append(friendCount)
+        except:
+            pass
+        try:
+            temp[friendCount].append(checkinwfriends[uid][friendCount]/float(totalCheckins))
+        except:
+            temp[friendCount] = [checkinwfriends[uid][friendCount]/float(totalCheckins)]
+        
+#plot(X,Y,"Frequency vs Friend Count", "# of Friends Checked in with", "Frequency")
+
+#Average 
+Xavg = []
+Yavg = []
+for key in temp.keys():
+    Xavg.append(key)
+    Yavg.append(sum(temp[key])/float(len(temp[key])))
+plot(Xavg,Yavg,"Checkins vs Popularity", "Popularity", "Checkins")
+
 #            
 #maxVal = -1
 #for value in popCheckIn.values():
