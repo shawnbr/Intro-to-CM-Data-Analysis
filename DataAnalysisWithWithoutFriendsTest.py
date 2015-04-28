@@ -1,6 +1,7 @@
 from datetime import datetime
 from datetime import timedelta
 
+import csv
 import os
 import matplotlib.pyplot as plt
 DIR_PATH = os.getcwd() #Get currect directory
@@ -88,10 +89,16 @@ for user in checkins.keys():
             except:
                 pass
         try:
-            print user, friendCount
             checkinwfriends[user][friendCount] += 1
         except:
             checkinwfriends[user][friendCount] = 1            
+
+
+writer = csv.writer(open('dict.csv', 'wb'))
+for key, value in checkinwfriends.items():
+   writer.writerow([key, value])
+   
+
 
  
 print "time to graph"
@@ -115,7 +122,7 @@ for uid in checkinwfriends.keys():
         except:
             temp[friendCount] = [checkinwfriends[uid][friendCount]/float(totalCheckins)]
         
-#plot(X,Y,"Frequency vs Friend Count", "# of Friends Checked in with", "Frequency")
+plot(X,Y,"Frequency vs Friend Count", "# of Friends Checked in with", "Frequency")
 
 #Average 
 Xavg = []
@@ -123,7 +130,8 @@ Yavg = []
 for key in temp.keys():
     Xavg.append(key)
     Yavg.append(sum(temp[key])/float(len(temp[key])))
-plot(Xavg,Yavg,"Checkins vs Popularity", "Popularity", "Checkins")
+plot(Xavg,Yavg,"Frequency vs Friend Count", "# of Friends Checked in with", "Frequency (avg)")
+
 
 #            
 #maxVal = -1
