@@ -1,6 +1,7 @@
 from datetime import datetime
 from datetime import timedelta
 
+import math
 import csv
 import os
 import matplotlib.pyplot as plt
@@ -13,8 +14,12 @@ LAT = 2
 LON = 3
 LID = 4
 
-#delta = timedelta(minutes=10)
-delta = 600 
+#timedelta = 600 seconds, i.e. 10 minutes
+timedelta = 600 
+#distancedelta = 500 meters, i.e. 0.5 km
+distancedelta = 0.5
+
+
 
 #dictionary of connections: key=userid, val=friend id
 connections = {}
@@ -34,6 +39,41 @@ def plot(X,Y, title, xlabel, ylabel):
     plt.ylabel(ylabel)
     plt.show()
     #plt.savefig('CMC '+name+'.png')
+
+#*****************************************************
+#Gets the distance between 2 different locations 
+#From Oliver
+#*****************************************************
+def get_distance(lat1, long1, lat2, long2):
+   # Convert latitude and longitude to
+   # spherical coordinates in radians.
+   degrees_to_radians = math.pi/180.0
+
+   # phi = 90 - latitude
+   phi1 = (90.0 - lat1)*degrees_to_radians
+   phi2 = (90.0 - lat2)*degrees_to_radians
+
+   # theta = longitude
+   theta1 = long1*degrees_to_radians
+   theta2 = long2*degrees_to_radians
+
+   # Compute spherical distance from spherical coordinates.
+
+   # For two locations in spherical coordinates
+   # (1, theta, phi) and (1, theta, phi)
+   # cosine( arc length ) =
+   #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
+   # distance = rho * arc length
+
+   cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) +
+          math.cos(phi1)*math.cos(phi2))
+   arc = math.acos( cos )
+
+   # Remember to multiply arc by the radius of the earth
+   # in your favorite set of units to get length.
+   # MODIFIED TO return distance in miles
+   return arc*6371.0
+
 
 print "importing edges"
 with open(DIR_PATH + os.sep + "data\Gowalla_edges"+version+".txt", 'r') as f:
@@ -74,19 +114,22 @@ for user in checkins.keys():
     checkinwfriends[user] = {}
     print "user "+ str(user)
     #for each checkin
-    for times in checkins[user].keys():
+    for time in checkins[user].keys():
         friendCount = 0
 
         #for each friend
         for friend in connections[user]:
             #for each friend's checkins
             try:
-                for ftimes in checkins[friend]:
+                for ftime in checkins[friend]:
                     #if they checked in at a similar time
-                    if abs((times-ftimes).total_seconds()) < delta:
+                    if abs((time-ftime).total_seconds()) < timedelta and get_distance(checkins[user][time][0],checkins[user][time][1],
+                    checkins[friend][ftime][0], checkins[friend][ftime][1]) < distancedelta:
                         friendCount += 1
             #if the friend never checked in
             except:
+                #print get_distance(checkins[user][time][0],checkins[user][time][1],
+                #    checkins[friend][ftime][0], checkins[friend][ftime][1])
                 pass
         try:
             checkinwfriends[user][friendCount] += 1
